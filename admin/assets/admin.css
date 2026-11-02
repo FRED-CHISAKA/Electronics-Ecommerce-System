@@ -1,0 +1,48 @@
+body{background:#f4f7fb;color:#172033;font-family:system-ui,-apple-system,"Segoe UI",sans-serif}.admin-topbar{background:#171539;min-height:64px}.admin-shell{display:flex;min-height:calc(100vh - 64px)}.admin-sidebar{width:235px;flex-shrink:0;background:#fff;border-right:1px solid #e6eaf0;padding:22px 14px}.admin-sidebar a{display:flex;align-items:center;gap:12px;padding:11px 13px;margin:3px 0;border-radius:10px;color:#4a5264;text-decoration:none;font-weight:500}.admin-sidebar a:hover,.admin-sidebar a:focus{background:#eef5ff;color:#174ea6}.admin-sidebar a i{font-size:1.1rem}.sidebar-label{font-size:.7rem;color:#8b93a4;font-weight:700;letter-spacing:.08em;padding:0 13px 10px}.admin-main{min-width:0;flex:1;padding:28px}.metric-card,.panel{background:#fff;border:1px solid #e8edf4;border-radius:14px;box-shadow:0 3px 12px rgba(26,42,70,.035)}.metric-card{padding:20px;height:100%}.metric-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#eef5ff;color:#2457b2;font-size:1.25rem}.metric-value{font-size:1.65rem;font-weight:750;letter-spacing:-.03em}.panel{padding:20px}.table>:not(caption)>*>*{padding:.8rem .75rem;vertical-align:middle}.table thead th{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:#7a8497;background:#f8fafc;white-space:nowrap}.form-label{font-weight:600;font-size:.9rem}.image-thumb{width:48px;height:48px;object-fit:cover;border-radius:8px;background:#f0f2f5}.status-pill{font-size:.75rem}.admin-main .btn-primary{background:#2457b2;border-color:#2457b2}@media(max-width:800px){.admin-shell{display:block}.admin-sidebar{width:100%;display:flex;overflow-x:auto;padding:8px;gap:3px;border-right:0;border-bottom:1px solid #e6eaf0}.admin-sidebar .sidebar-label{display:none}.admin-sidebar a{white-space:nowrap;margin:0}.admin-main{padding:18px 12px}}
+
+/* Admin light/dark theme support, shared with the storefront preference. */
+:root { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"] body { background:#0e1420; color:#edf3ff; }
+html[data-theme="dark"] .admin-sidebar, html[data-theme="dark"] .metric-card, html[data-theme="dark"] .panel { background:#151e2d; border-color:#2a374b; color:#edf3ff; }
+html[data-theme="dark"] .admin-sidebar { border-right-color:#2a374b; }
+html[data-theme="dark"] .admin-sidebar a { color:#c0cce0; }
+html[data-theme="dark"] .admin-sidebar a:hover, html[data-theme="dark"] .admin-sidebar a:focus { background:#223451; color:#a7caff; }
+html[data-theme="dark"] .sidebar-label, html[data-theme="dark"] .text-secondary, html[data-theme="dark"] .form-text { color:#a6b4c9!important; }
+html[data-theme="dark"] .table { --bs-table-color:#e7eefb; --bs-table-bg:transparent; --bs-table-border-color:#2a374b; --bs-table-striped-color:#e7eefb; --bs-table-striped-bg:#172235; --bs-table-hover-color:#fff; --bs-table-hover-bg:#1b2a40; color:#e7eefb; }
+html[data-theme="dark"] .table thead th { background:#1b2739; color:#b2c0d5; }
+html[data-theme="dark"] .form-control, html[data-theme="dark"] .form-select, html[data-theme="dark"] textarea, html[data-theme="dark"] input { background-color:#101927; color:#edf3ff; border-color:#344258; }
+html[data-theme="dark"] .form-control::placeholder, html[data-theme="dark"] input::placeholder { color:#8797ad; }
+html[data-theme="dark"] .form-check-label, html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3, html[data-theme="dark"] h4, html[data-theme="dark"] h5 { color:#edf3ff; }
+html[data-theme="dark"] .metric-icon { background:#223451; color:#9cc1ff; }
+html[data-theme="dark"] .image-thumb { background:#202c3d; }
+html[data-theme="dark"] .btn-outline-secondary { color:#d0d9e8; border-color:#58677d; }
+html[data-theme="dark"] .btn-outline-secondary:hover { background:#26364d; color:#fff; }
+html[data-theme="dark"] .alert-info { background:#172b43; color:#d7e9ff; border-color:#284b70; }
+html[data-theme="dark"] .dropdown-menu { background:#151e2d; border-color:#2a374b; }
+html[data-theme="dark"] .dropdown-item { color:#edf3ff; }
+html[data-theme="dark"] .dropdown-item:hover { background:#223451; }
+
+/* Icon-only theme button; title/aria-label provides the hover tooltip. */
+.theme-toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+    padding: 0;
+    border: 1px solid #8793a5;
+    border-radius: 50%;
+    background: transparent;
+    color: inherit;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+}
+.theme-toggle:hover, .theme-toggle:focus-visible { background: #e8f1ff; color: #1459d9; border-color: #9bbcff; outline: none; }
+.theme-toggle:active { transform: scale(.94); }
+html[data-theme="dark"] .theme-toggle { color: #edf3ff; border-color: #58677d; }
+html[data-theme="dark"] .theme-toggle:hover, html[data-theme="dark"] .theme-toggle:focus-visible { background: #26364d; color: #fff; border-color: #8299ba; }
+.admin-topbar .theme-toggle { color: #fff; border-color: #aab4c6; }
+.admin-topbar .theme-toggle:hover, .admin-topbar .theme-toggle:focus-visible { color: #1459d9; }

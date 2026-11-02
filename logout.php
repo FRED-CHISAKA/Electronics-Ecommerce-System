@@ -1,0 +1,1 @@
+<?php declare(strict_types=1);require_once __DIR__.'/includes/functions.php';if($_SERVER['REQUEST_METHOD']!=='POST'||!csrf_is_valid($_POST['csrf_token']??null)){http_response_code(419);exit('Invalid form token.');}unset($_SESSION['user_id']);session_regenerate_id(true);redirect('index.php');?>

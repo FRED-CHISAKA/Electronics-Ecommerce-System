@@ -1,0 +1,38 @@
+<?php
+declare(strict_types=1);require_once __DIR__.'/bootstrap.php';
+admin_require_login();
+$fields=['store_name'=>'Store name','store_currency'=>'Currency code','whatsapp_number'=>'WhatsApp number (international format)','default_delivery_fee'=>'Default delivery fee (KES)','business_location'=>'Business location / address','working_hours'=>'Working hours','location_map_url'=>'Google Maps directions URL','announcement_bar'=>'Top announcement bar','facebook_url'=>'Facebook URL','instagram_url'=>'Instagram URL','tiktok_url'=>'TikTok URL','about_intro'=>'About Us introduction','about_story'=>'About Us story','about_commitment'=>'Our commitment','mpesa_instructions'=>'Manual M-Pesa payment instructions'];
+function save_setting(PDO $pdo,string $key,string $value):void{$s=$pdo->prepare('INSERT INTO settings(setting_key,setting_value) VALUES(?,?) ON DUPLICATE KEY UPDATE setting_value=VALUES(setting_value)');$s->execute([$key,$value]);}
+function setting_upload(string $field,string $folder):?string{if(empty($_FILES[$field]['name'])||($_FILES[$field]['error']??UPLOAD_ERR_NO_FILE)===UPLOAD_ERR_NO_FILE)return null;$f=$_FILES[$field];if($f['error']!==UPLOAD_ERR_OK||$f['size']>5*1024*1024)throw new RuntimeException('Upload failed or file exceeds 5 MB.');$fi=new finfo(FILEINFO_MIME_TYPE);$mime=$fi->file($f['tmp_name']);$allowed=['image/jpeg'=>'jpg','image/png'=>'png','image/webp'=>'webp'];if(!isset($allowed[$mime]))throw new RuntimeException('Use JPG, PNG or WEBP images.');$dir=__DIR__.'/../uploads/'.$folder;if(!is_dir($dir))mkdir($dir,0755,true);$name=bin2hex(random_bytes(12)).'.'.$allowed[$mime];if(!move_uploaded_file($f['tmp_name'],$dir.'/'.$name))throw new RuntimeException('Could not save image.');return 'uploads/'.$folder.'/'.$name;}
+$errors=[];if($_SERVER['REQUEST_METHOD']==='POST'){admin_csrf_check();try{foreach($fields as $key=>$label){$v=trim((string)($_POST[$key]??''));if($key==='default_delivery_fee'&&($v!==''&&(!is_numeric($v)||(float)$v<0)))throw new RuntimeException('Delivery fee must be a non-negative number.');save_setting($pdo,$key,$v);}if($logo=setting_upload('store_logo','branding'))save_setting($pdo,'store_logo',$logo);
+
+
+
+
+
+
+
+
+
+$slides=[];
+for($i=1;$i<=3;$i++){
+    $title=trim((string)($_POST["slide_{$i}_title"]??''));
+    $subtitle=trim((string)($_POST["slide_{$i}_subtitle"]??''));
+    $button=trim((string)($_POST["slide_{$i}_button"]??'Shop now'));
+    $url=trim((string)($_POST["slide_{$i}_url"]??'shop.php'));
+    $image=trim((string)($_POST["slide_{$i}_existing"]??''));
+    if($new=setting_upload("slide_{$i}_image",'slides'))$image=$new;
+    if($title!==''||$subtitle!==''||$image!=='')
+    $slides[]=['title'=>$title,'subtitle'=>$subtitle,'button'=>$button,'url'=>$url,'image'=>$image];
+}
+save_setting($pdo,'homepage_slides',json_encode($slides,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE));
+$_SESSION['flash']='Store settings saved.';
+redirect('settings.php');}catch(Throwable $e){$errors[]=$e->getMessage();}}
+
+
+
+
+
+$values=[];foreach($fields as $key=>$label){$s=$pdo->prepare('SELECT setting_value FROM settings WHERE setting_key=?');$s->execute([$key]);$values[$key]=(string)($s->fetchColumn()?:'');}$logo=setting('store_logo','');$slides=json_decode(setting('homepage_slides','[]'),true)?:[];admin_page_start('Store settings');foreach($errors as $err):?><div class="alert alert-danger"><?=e($err)?></div><?php endforeach;?><div class="panel"><form method="post" enctype="multipart/form-data"><input type="hidden" name="csrf_token" value="<?=e(csrf_token())?>"><h2 class="h5 mb-3">Business information</h2><?php foreach($fields as $key=>$label):?><div class="mb-3"><label class="form-label" for="<?=e($key)?>"><?=e($label)?></label><?php if(in_array($key,['business_location','working_hours','mpesa_instructions','about_intro','about_story','about_commitment'],true)):?><textarea class="form-control" id="<?=e($key)?>" name="<?=e($key)?>" rows="3"><?=e($values[$key])?></textarea></div><?php else:?><input class="form-control" id="<?=e($key)?>" name="<?=e($key)?>" value="<?=e($values[$key])?>" <?= $key==='default_delivery_fee'?'type="number" min="0" step="0.01"':''?>></div><?php endif;?><?php endforeach;?>
+<hr><h2 class="h5">Store logo</h2><?php if($logo):?><img src="../<?=e($logo)?>" alt="Current logo" style="max-width:180px;max-height:90px" class="d-block mb-2"><?php endif;?><input class="form-control mb-4" type="file" name="store_logo" accept="image/png,image/jpeg,image/webp"><p class="form-text">Upload a transparent PNG or a JPG/WEBP logo. The logo replaces the text brand in the storefront header.</p>
+<hr><h2 class="h5">Homepage slider</h2><p class="text-secondary">Configure up to three slides. Leave a slide title empty to hide it.</p><?php for($i=1;$i<=3;$i++):$sl=$slides[$i-1]??[];?><div class="border rounded p-3 mb-3"><h3 class="h6">Slide <?=$i?></h3><div class="row g-2"><div class="col-md-6"><label class="form-label">Heading</label><input class="form-control" name="slide_<?=$i?>_title" value="<?=e($sl['title']??'')?>"></div><div class="col-md-6"><label class="form-label">Subtitle</label><input class="form-control" name="slide_<?=$i?>_subtitle" value="<?=e($sl['subtitle']??'')?>"></div><div class="col-md-4"><label class="form-label">Button text</label><input class="form-control" name="slide_<?=$i?>_button" value="<?=e($sl['button']??'Shop now')?>"></div><div class="col-md-8"><label class="form-label">Button destination</label><input class="form-control" name="slide_<?=$i?>_url" value="<?=e($sl['url']??'shop.php')?>"></div><div class="col-md-8"><label class="form-label">Upload slide image</label><input class="form-control" type="file" name="slide_<?=$i?>_image" accept="image/png,image/jpeg,image/webp"><input type="hidden" name="slide_<?=$i?>_existing" value="<?=e($sl['image']??'')?>"></div><?php if(!empty($sl['image'])):?><div class="col-md-4"><img src="../<?=e($sl['image'])?>" alt="Slide <?=$i?>" style="width:100%;height:70px;object-fit:cover"></div><?php endif;?></div></div><?php endfor;?><button class="btn btn-primary">Save settings</button></form></div><?php admin_page_end();?>

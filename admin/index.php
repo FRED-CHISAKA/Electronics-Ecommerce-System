@@ -1,0 +1,16 @@
+<?php
+declare(strict_types=1); require_once __DIR__.'/bootstrap.php'; admin_require_login();
+$products=(int)$pdo->query('SELECT COUNT(*) FROM products')->fetchColumn();
+$activeProducts=(int)$pdo->query('SELECT COUNT(*) FROM products WHERE is_active=1')->fetchColumn();
+$orders=(int)$pdo->query('SELECT COUNT(*) FROM orders')->fetchColumn();
+$pending=(int)$pdo->query("SELECT COUNT(*) FROM orders WHERE status='pending'")->fetchColumn();
+$customers=(int)$pdo->query("SELECT COUNT(*) FROM users WHERE role='customer'")->fetchColumn();
+$lowStock=(int)$pdo->query('SELECT COUNT(*) FROM products WHERE stock_quantity <= low_stock_threshold AND is_active=1')->fetchColumn();
+$revenue=(float)$pdo->query("SELECT COALESCE(SUM(total_amount),0) FROM orders WHERE payment_status='paid' AND status <> 'cancelled'")->fetchColumn();
+$recent=$pdo->query('SELECT id,order_number,customer_name,total_amount,status,payment_status,placed_at FROM orders ORDER BY placed_at DESC LIMIT 8')->fetchAll();
+admin_page_start('Dashboard'); ?>
+<div class="row g-3 mb-4">
+<?php foreach ([['Products',$products,'bi-box-seam'],['Active products',$activeProducts,'bi-check-circle'],['Orders',$orders,'bi-bag-check'],['Pending orders',$pending,'bi-clock-history'],['Customers',$customers,'bi-people'],['Low-stock products',$lowStock,'bi-exclamation-triangle']] as $m): ?><div class="col-6 col-xl-4"><div class="metric-card"><div class="d-flex justify-content-between align-items-start"><div><div class="text-secondary small mb-2"><?= e($m[0]) ?></div><div class="metric-value"><?= number_format((int)$m[1]) ?></div></div><div class="metric-icon"><i class="bi <?= e($m[2]) ?>"></i></div></div></div></div><?php endforeach; ?>
+<div class="col-12"><div class="metric-card d-flex align-items-center justify-content-between flex-wrap gap-3"><div><div class="text-secondary small">Recorded paid revenue</div><div class="metric-value"><?= e(money($revenue)) ?></div><div class="text-secondary small">Calculated only from orders marked paid; demo data may be empty.</div></div><a class="btn btn-primary" href="products.php?action=new"><i class="bi bi-plus-lg me-1"></i> Add product</a></div></div></div>
+<div class="panel"><div class="d-flex justify-content-between align-items-center mb-3"><h2 class="h5 mb-0">Recent orders</h2><a href="orders.php" class="btn btn-sm btn-outline-primary">View all orders</a></div><div class="table-responsive"><table class="table table-hover mb-0"><thead><tr><th>Order</th><th>Customer</th><th>Total</th><th>Order status</th><th>Payment</th><th>Date</th></tr></thead><tbody><?php if (!$recent): ?><tr><td colspan="6" class="text-center text-secondary py-4">No orders yet. New orders will appear here.</td></tr><?php else: foreach($recent as $r): ?><tr><td><a href="orders.php?view=<?= (int)$r['id'] ?>" class="fw-semibold"><?= e($r['order_number']) ?></a></td><td><?= e($r['customer_name']) ?></td><td><?= e(money($r['total_amount'])) ?></td><td><span class="badge text-bg-light border status-pill"><?= e(ucfirst($r['status'])) ?></span></td><td><?= e(ucfirst($r['payment_status'])) ?></td><td><?= e($r['placed_at']) ?></td></tr><?php endforeach; endif; ?></tbody></table></div></div>
+<?php admin_page_end(); ?>
