@@ -83,3 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeZoom(); });
     }
 });
+
+// Admin sidebar collapse preference
+document.addEventListener('click', (event) => { const btn=event.target.closest('[data-sidebar-toggle]'); if(!btn)return; document.body.classList.toggle('sidebar-collapsed'); try{localStorage.setItem('bc-admin-sidebar',document.body.classList.contains('sidebar-collapsed')?'collapsed':'expanded');}catch(e){} });

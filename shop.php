@@ -11,7 +11,7 @@ $page = max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
 $perPage = 12;
 $offset = ($page - 1) * $perPage;
 
-$categories = $pdo->query("SELECT id, name FROM categories WHERE is_active = 1 ORDER BY name")->fetchAll();
+$categories = $pdo->query("SELECT id, name, parent_id FROM categories WHERE is_active = 1 ORDER BY name")->fetchAll();
 $where = ['p.is_active = 1'];
 $params = [];
 if ($q !== '') {
@@ -23,8 +23,10 @@ if ($q !== '') {
     $params['q_brand'] = $needle;
 }
 if ($categoryId > 0) {
-    $where[] = 'p.category_id = :category_id';
-    $params['category_id'] = $categoryId;
+    $descendants = [$categoryId]; $changed = true;
+    while ($changed) { $changed = false; foreach ($categories as $candidate) { if (!empty($candidate['parent_id']) && in_array((int)$candidate['parent_id'], $descendants, true) && !in_array((int)$candidate['id'], $descendants, true)) { $descendants[] = (int)$candidate['id']; $changed = true; } } }
+    $holders=[]; foreach($descendants as $i=>$cid){$key='category_'.$i;$holders[]=':'.$key;$params[$key]=$cid;}
+    $where[] = 'p.category_id IN (' . implode(',', $holders) . ')';
 }
 $orderBy = match ($sort) {
     'price_low' => 'p.price ASC, p.name ASC',
@@ -75,7 +77,7 @@ require __DIR__ . '/includes/header.php';
             <select id="category" name="category" class="form-select">
                 <option value="0">All categories</option>
                 <?php foreach ($categories as $category): ?>
-                    <option value="<?= (int) $category['id'] ?>" <?= $categoryId === (int) $category['id'] ? 'selected' : '' ?>><?= e($category['name']) ?></option>
+                    <option value="<?= (int) $category['id'] ?>" <?= $categoryId === (int) $category['id'] ? 'selected' : '' ?>><?= !empty($category['parent_id']) ? '— ' : '' ?><?= e($category['name']) ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
