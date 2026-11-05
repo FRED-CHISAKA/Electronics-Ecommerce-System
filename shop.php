@@ -6,6 +6,7 @@ require_once __DIR__ . '/includes/functions.php';
 $pageTitle = 'Shop';
 $q = trim((string) ($_GET['q'] ?? ''));
 $categoryId = filter_input(INPUT_GET, 'category', FILTER_VALIDATE_INT) ?: 0;
+$parentProductId = filter_input(INPUT_GET, 'parent_product', FILTER_VALIDATE_INT) ?: 0;
 $sort = (string) ($_GET['sort'] ?? 'newest');
 $page = max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
 $perPage = 12;
@@ -21,6 +22,10 @@ if ($q !== '') {
     $params['q_desc'] = $needle;
     $params['q_sku'] = $needle;
     $params['q_brand'] = $needle;
+}
+if ($parentProductId > 0) {
+    $where[] = 'p.parent_product_id = :parent_product_id';
+    $params['parent_product_id'] = $parentProductId;
 }
 if ($categoryId > 0) {
     $descendants = [$categoryId]; $changed = true;
@@ -42,7 +47,7 @@ $totalProducts = (int) $countStmt->fetchColumn();
 $totalPages = max(1, (int) ceil($totalProducts / $perPage));
 
 $sql = "SELECT p.id, p.name, p.slug, p.short_description, p.price, p.compare_at_price,
-               p.image_path, p.stock_quantity, p.sku, p.created_at, c.name AS category_name
+               p.image_path, p.stock_quantity, p.sku, p.created_at, p.is_new, c.name AS category_name
         FROM products p
         LEFT JOIN categories c ON c.id = p.category_id
         WHERE {$whereSql}
@@ -62,7 +67,7 @@ require __DIR__ . '/includes/header.php';
 <section class="page-banner">
     <div class="container py-4 py-lg-5">
         <span class="eyebrow">THE COLLECTION</span>
-        <h1 class="display-6 fw-bold mt-2 mb-2">Shop electronics</h1>
+        <h1 class="display-6 fw-bold mt-2 mb-2"><?php if($parentProductId>0){$gp=$pdo->prepare('SELECT name FROM products WHERE id=?');$gp->execute([$parentProductId]);echo e((string)($gp->fetchColumn()?:'Product group'));}else{echo 'Shop electronics';} ?></h1>
         <p class="text-secondary mb-0">Find your next device, upgrade or everyday accessory.</p>
     </div>
 </section>

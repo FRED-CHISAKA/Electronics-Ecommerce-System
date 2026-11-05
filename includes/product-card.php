@@ -8,7 +8,7 @@ $stock=(int)($product['stock_quantity']??0);
    <?php if(!empty($product['image_path'])):?><img src="<?=e($product['image_path'])?>" alt="<?=e($product['name'])?>" loading="lazy"><?php else:?><div class="product-placeholder"><span>BC</span></div><?php endif;?>
   </a>
   <?php if($discount>0):?><span class="product-badge discount-badge">-<?=$discount?>%</span><?php endif;?>
-  <?php if(!empty($product['created_at']) && strtotime((string)$product['created_at'])>strtotime('-30 days')):?><span class="product-badge new-badge">NEW</span><?php endif;?>
+  <?php if(!empty($product['is_new'])):?><span class="product-badge new-badge">NEW</span><?php endif;?>
  </div>
  <div class="product-card-body">
   <?php if(!empty($product['sku'])):?><div class="product-sku">SKU <?=e($product['sku'])?></div><?php endif;?>

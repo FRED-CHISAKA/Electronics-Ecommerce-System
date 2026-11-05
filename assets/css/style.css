@@ -229,3 +229,25 @@ html[data-theme="dark"] .footer-quick-links>a{color:#edf3ff}
 html[data-theme="dark"] .footer-quick-links>a:hover{color:#ffad66}
 @media(max-width:991px){.nav-menu{justify-content:flex-start;overflow-x:auto;gap:22px}.nav-dropdown{position:relative}.nav-mega-menu{position:absolute;left:0;right:auto;width:min(92vw,680px);max-height:65vh;overflow:auto;padding:18px}.nav-mega-columns{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.nav-view-all{margin:0 -18px -18px}}
 @media(max-width:767px){.utility-links{gap:12px;flex-wrap:wrap}.utility-links>a{font-size:.78rem}.top-socials{display:none!important}.location-hover>span{left:auto;right:0;transform:translateY(-4px)}.location-hover:hover>span{transform:translateY(0)}.header-main{min-height:auto;padding-top:12px;padding-bottom:12px;flex-wrap:wrap;gap:12px}.store-header{top:0}.nav-menu{min-height:48px}.nav-mega-menu{position:fixed;top:auto;left:8px;right:8px;width:auto;max-height:65vh;overflow:auto}.nav-mega-columns{grid-template-columns:1fr 1fr;gap:16px}.home-hero-slider .hero-slide-content{padding-left:62px;padding-right:22px}.hero-slide h1{font-size:2.1rem}}
+
+/* Final finishing pass: consistent breadcrumb colour and visible menu indicators */
+.breadcrumb,.breadcrumb-item,.breadcrumb-item a,.breadcrumb-item.active,.breadcrumb-item+.breadcrumb-item::before{color:#e87524!important}
+.breadcrumb-item a:hover{color:#c85b12!important}
+.nav-chevron{display:inline-block!important;color:currentColor!important;font-size:.8rem;opacity:1!important}
+.nav-parent{position:relative}
+.nav-mega-menu{pointer-events:auto}
+.nav-dropdown:hover>.nav-mega-menu,.nav-dropdown:focus-within>.nav-mega-menu{display:block!important;visibility:visible;opacity:1}
+.nav-mega-product{font-size:.88rem;color:#334155;text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid #e87524;transition:color .15s,transform .15s}
+.nav-mega-product:hover{color:#e87524;transform:translateX(3px)}
+html[data-theme="dark"] .nav-mega-product{color:#d2dbea}
+html[data-theme="dark"] .nav-mega-product:hover{color:#ffad66}
+.footer-newsletter .form-control{min-width:0}
+#newsletter{scroll-margin-top:150px}
+@media(max-width:767px){.nav-mega-menu{display:none}.nav-dropdown:focus-within>.nav-mega-menu{display:block!important}}
+/* Stage 4.2.3: reliable category mega-menu indicators and hover states */
+.nav-parent{display:inline-flex;align-items:center;gap:.45rem}
+.nav-parent .nav-chevron{display:inline-block!important;visibility:visible!important;opacity:1!important;font-size:.72rem;color:currentColor;transition:transform .18s ease}
+.nav-dropdown:hover>.nav-parent .nav-chevron,.nav-dropdown:focus-within>.nav-parent .nav-chevron{transform:rotate(180deg)}
+.nav-mega-menu{visibility:hidden;opacity:0;display:block;pointer-events:none;transition:opacity .16s ease,visibility .16s ease}
+.nav-dropdown:hover>.nav-mega-menu,.nav-dropdown:focus-within>.nav-mega-menu{visibility:visible;opacity:1;pointer-events:auto}
+@media(max-width:767px){.nav-mega-menu{display:none;visibility:visible;opacity:1;pointer-events:auto}.nav-dropdown:focus-within>.nav-mega-menu{display:block}}
