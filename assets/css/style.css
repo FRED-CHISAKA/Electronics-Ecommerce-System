@@ -251,3 +251,23 @@ html[data-theme="dark"] .nav-mega-product:hover{color:#ffad66}
 .nav-mega-menu{visibility:hidden;opacity:0;display:block;pointer-events:none;transition:opacity .16s ease,visibility .16s ease}
 .nav-dropdown:hover>.nav-mega-menu,.nav-dropdown:focus-within>.nav-mega-menu{visibility:visible;opacity:1;pointer-events:auto}
 @media(max-width:767px){.nav-mega-menu{display:none;visibility:visible;opacity:1;pointer-events:auto}.nav-dropdown:focus-within>.nav-mega-menu{display:block}}
+
+
+/* Stage 4.2.4 finishing: account dropdown, shop density and a distinct footer */
+.account-menu{position:relative;display:inline-flex;align-items:center}
+.account-menu-trigger{border:0;background:transparent;cursor:pointer;font:inherit}
+.account-menu-panel{position:absolute;z-index:1200;top:calc(100% + 10px);right:0;min-width:190px;padding:7px;background:var(--surface,#fff);border:1px solid var(--border-color,#e4ebf5);border-radius:12px;box-shadow:0 14px 35px rgba(12,28,52,.16);display:none}
+.account-menu:hover .account-menu-panel,.account-menu:focus-within .account-menu-panel{display:block}
+.account-menu-panel>a,.account-menu-panel form button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;border-radius:8px;background:transparent;color:var(--body-text,#14233b);text-decoration:none;text-align:left;font:inherit}
+.account-menu-panel>a:hover,.account-menu-panel form button:hover{background:var(--surface-soft,#f7f9fc);color:#e87524}
+.account-menu-panel form{margin:0}
+.shop-product-col{width:20%;padding:0 calc(var(--bs-gutter-x)*.5);margin-bottom:1.5rem}
+.site-footer{background:#e9eef5;border-top:5px solid #171539;color:#17233b}
+.site-footer h5,.site-footer h6{color:#101b32;font-weight:800}
+.site-footer .text-secondary{color:#52627a!important}
+html[data-theme="dark"] .site-footer{background:#080f1c!important;border-top-color:#00a8cc;color:#eaf2ff}
+html[data-theme="dark"] .site-footer h5,html[data-theme="dark"] .site-footer h6{color:#fff}
+html[data-theme="dark"] .site-footer .text-secondary{color:#aab8cc!important}
+@media(max-width:1199px){.shop-product-col{width:25%}}
+@media(max-width:767px){.shop-product-col{width:50%}}
+@media(max-width:420px){.shop-product-col{width:100%}}

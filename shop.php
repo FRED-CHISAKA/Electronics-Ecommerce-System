@@ -9,19 +9,21 @@ $categoryId = filter_input(INPUT_GET, 'category', FILTER_VALIDATE_INT) ?: 0;
 $parentProductId = filter_input(INPUT_GET, 'parent_product', FILTER_VALIDATE_INT) ?: 0;
 $sort = (string) ($_GET['sort'] ?? 'newest');
 $page = max(1, filter_input(INPUT_GET, 'page', FILTER_VALIDATE_INT) ?: 1);
-$perPage = 12;
+$perPage = 15;
 $offset = ($page - 1) * $perPage;
 
 $categories = $pdo->query("SELECT id, name, parent_id FROM categories WHERE is_active = 1 ORDER BY name")->fetchAll();
 $where = ['p.is_active = 1'];
 $params = [];
 if ($q !== '') {
-    $where[] = '(p.name LIKE :q_name OR p.description LIKE :q_desc OR p.sku LIKE :q_sku OR EXISTS (SELECT 1 FROM brands b WHERE b.id=p.brand_id AND b.name LIKE :q_brand))';
+    $where[] = '(p.name LIKE :q_name OR p.description LIKE :q_desc OR p.sku LIKE :q_sku OR REPLACE(REPLACE(REPLACE(LOWER(p.name), " ", ""), "-", ""), "_", "") LIKE :q_compact OR EXISTS (SELECT 1 FROM brands b WHERE b.id=p.brand_id AND b.name LIKE :q_brand))';
     $needle = '%' . $q . '%';
+    $compactNeedle = '%' . preg_replace('/[\\s_-]+/u', '', mb_strtolower($q)) . '%';
     $params['q_name'] = $needle;
     $params['q_desc'] = $needle;
     $params['q_sku'] = $needle;
     $params['q_brand'] = $needle;
+    $params['q_compact'] = $compactNeedle;
 }
 if ($parentProductId > 0) {
     $where[] = 'p.parent_product_id = :parent_product_id';
@@ -112,7 +114,7 @@ require __DIR__ . '/includes/header.php';
     <?php else: ?>
         <div class="row g-3 g-lg-4">
             <?php foreach ($products as $product): ?>
-                <div class="col-6 col-md-4 col-xl-3"><?php require __DIR__.'/includes/product-card.php'; ?></div>
+                <div class="shop-product-col"><?php require __DIR__.'/includes/product-card.php'; ?></div>
             <?php endforeach; ?>
         </div>
         <?php if ($totalPages > 1): ?>

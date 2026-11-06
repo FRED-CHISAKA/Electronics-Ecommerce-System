@@ -111,6 +111,7 @@ require __DIR__ . '/includes/header.php';
                     <label class="visually-hidden" for="quantity">Quantity</label>
                     <input id="quantity" class="form-control" style="width:90px" type="number" name="quantity" min="1" max="<?= (int) $product['stock_quantity'] ?>" value="1" required>
                     <button type="submit" class="btn btn-primary btn-lg">Add to cart</button>
+                    <button type="submit" name="go_checkout" value="1" class="btn btn-success btn-lg">Quick shop · Checkout</button>
                 </form>
                 <?php endif; ?>
                 <a class="btn btn-outline-primary btn-lg" href="shop.php">Continue shopping</a>
