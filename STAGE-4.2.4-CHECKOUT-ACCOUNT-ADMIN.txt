@@ -1,0 +1,26 @@
+BLUECIRCUIT ELECTRONICS - STAGE 4.2.4
+Checkout, account menu, search, shop layout and admin tools
+
+INSTALLATION
+1. Back up your current electronics-store folder and electronics_store database.
+2. Extract this archive.
+3. Copy the contents of the electronics-store folder over your existing project folder.
+4. Preserve config/database.php, existing uploads, and your database.
+5. No database migration is required for this update. The newsletter_subscribers table from the previous newsletter migration must already exist.
+6. Open Admin > Store settings and enter a valid Business email / newsletter sender address before using newsletter sending.
+
+CHANGES
+- Customer avatar/name opens an Update profile and Logout menu. Logout uses POST and CSRF protection.
+- Quick Shop adds one unit and proceeds directly to guest-capable checkout.
+- Product detail page has a direct Quick shop / Checkout action.
+- Search ignores spaces, hyphens and underscores in product names, so Power Bank can match powerbank.
+- Shop listing uses five columns on wide desktop screens, four on medium screens and two on mobile.
+- Footer has a more distinct surface and border.
+- Admin > Newsletter subscribers lists subscribers and allows selected-recipient sending or unsubscribing.
+- Admin > Administrators supports adding, editing, disabling and deleting administrator accounts.
+
+EMAIL DELIVERY NOTE
+Newsletter sending uses PHP mail(). The server must have working outbound email configured. Local XAMPP installations commonly do not; configure SMTP through a trusted mail library/provider before production use. A successful mail() return means the server accepted the message for processing, not that it reached the inbox.
+
+SECURITY NOTE
+Only trusted administrators should have access to Admin > Administrators and Newsletter subscribers. Use HTTPS, strong unique passwords, and test mail delivery before sending campaigns.

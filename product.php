@@ -103,18 +103,18 @@ require __DIR__ . '/includes/header.php';
                 <?php endif; ?>
             </div>
             <div class="product-description mb-4"><?= nl2br(e($product['description'] ?? 'Product details will be added soon.')) ?></div>
-            <div class="d-flex flex-wrap gap-2 align-items-center">
+            <div class="product-detail-actions d-flex flex-wrap gap-2 align-items-center">
                 <?php if ((int) $product['stock_quantity'] > 0): ?>
                 <form method="post" action="cart-action.php" class="d-flex gap-2 align-items-center">
                     <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
                     <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
                     <label class="visually-hidden" for="quantity">Quantity</label>
-                    <input id="quantity" class="form-control" style="width:90px" type="number" name="quantity" min="1" max="<?= (int) $product['stock_quantity'] ?>" value="1" required>
-                    <button type="submit" class="btn btn-primary btn-lg">Add to cart</button>
-                    <button type="submit" name="go_checkout" value="1" class="btn btn-success btn-lg">Quick shop · Checkout</button>
+                    <div class="quantity-stepper" data-quantity-stepper><button type="button" class="quantity-step" data-quantity-minus aria-label="Decrease quantity">−</button><input id="quantity" class="form-control" type="number" name="quantity" min="1" max="<?= (int) $product['stock_quantity'] ?>" value="1" step="1" inputmode="numeric" required><button type="button" class="quantity-step" data-quantity-plus aria-label="Increase quantity">+</button></div>
+                    <button type="submit" class="btn btn-primary">Add to cart</button>
+                    <button type="submit" name="go_checkout" value="1" class="btn btn-success">Checkout</button>
                 </form>
                 <?php endif; ?>
-                <a class="btn btn-outline-primary btn-lg" href="shop.php">Continue shopping</a>
+                <a class="btn btn-outline-primary" href="shop.php">Continue shopping</a>
             </div>
             <p class="small text-secondary mt-3">Checkout is available on this demo store. Manual M-Pesa payments require staff verification.</p>
             <hr class="my-4">

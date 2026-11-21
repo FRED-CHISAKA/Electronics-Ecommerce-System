@@ -1,0 +1,19 @@
+BLUECIRCUIT ELECTRONICS — STAGE 4.2
+
+1. BACK UP your existing electronics-store folder and electronics_store database first.
+2. Copy the contents of this package's electronics-store folder over your existing project folder. Do not delete your uploads or config/database.php; preserve your existing database credentials and uploaded files.
+3. In phpMyAdmin, select electronics_store and run this migration ONCE:
+   database/migrations/20261103_stage42_catalogue.sql
+   Do not re-import database/schema.sql.
+4. Sign in to Admin and test Categories, Products, Media library and Dashboard.
+5. Add parent categories, then child categories by choosing Parent category. Add a third level by choosing a child as its parent. Product category pages include products assigned to descendants.
+6. Product specifications are now entered one per line. Use Label: Value for named specifications.
+7. Parent product/grouping is optional. Choose an existing product as the parent. This does not replace the category assignment.
+
+NOTES
+- The migration adds products.parent_product_id and page_views. Existing category.parent_id already existed, so no category table rebuild is needed.
+- Dashboard traffic begins collecting page views after this update. Historical traffic cannot be reconstructed.
+- Profit is an estimate based on paid order line items and the current products.cost_price. If cost prices are changed later, historical profit may not reflect the original purchase cost.
+- Social icons use the configured Facebook, Instagram, TikTok and WhatsApp settings.
+- Verify that Bootstrap Icons includes the TikTok icon in the CDN version in use; if it does not, replace it with a text/icon alternative or update the icon library.
+- PHP syntax was checked. A live browser/database integration test against your XAMPP database has not been performed here.

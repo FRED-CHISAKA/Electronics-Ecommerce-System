@@ -74,7 +74,7 @@ require __DIR__ . '/includes/header.php';
     </div>
 </section>
 <section class="container py-4 py-lg-5">
-    <form class="shop-toolbar row g-2 align-items-end mb-4" method="get" action="shop.php">
+    <form class="shop-toolbar row g-2 align-items-end mb-4 shop-search-toolbar" method="get" action="shop.php"><button class="shop-mobile-search-toggle" type="button" data-shop-search-toggle aria-label="Show product filters and search"><i class="bi bi-search"></i></button>
         <div class="col-12 col-md-5">
             <label for="q" class="form-label small fw-semibold">Search products</label>
             <input id="q" name="q" class="form-control" type="search" value="<?= e($q) ?>" placeholder="Search name, details or SKU">

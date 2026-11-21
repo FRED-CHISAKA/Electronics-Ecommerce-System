@@ -8,8 +8,6 @@ $facebook=setting('facebook_url',''); $instagram=setting('instagram_url',''); $t
 $searchQ=trim((string)($_GET['q']??'')); $navCategories=[];
 try{$navCategories=$pdo->query('SELECT id,parent_id,name FROM categories WHERE is_active=1 ORDER BY name')->fetchAll();}catch(Throwable $e){}
 $navTree=[]; foreach($navCategories as $nc){$pid=(int)($nc['parent_id']??0);$navTree[$pid][]=$nc;}
-$navParentProducts=[]; try{$navParentProducts=$pdo->query('SELECT p.id,p.name,p.category_id FROM products p WHERE EXISTS (SELECT 1 FROM products v WHERE v.parent_product_id=p.id AND v.is_active=1) ORDER BY p.name')->fetchAll();}catch(Throwable $e){}
-$navProductsByCategory=[]; foreach($navParentProducts as $np){$navProductsByCategory[(int)($np['category_id']??0)][]=$np;}
 ?>
 <?php try{$pv=$pdo->prepare('INSERT INTO page_views(page_path,session_hash) VALUES(?,?)');$pv->execute([substr((string)($_SERVER['REQUEST_URI']??'/'),0,255),hash('sha256',session_id())]);}catch(Throwable $e){}?>
 <!doctype html><html lang="en"><head>
@@ -20,7 +18,7 @@ $navProductsByCategory=[]; foreach($navParentProducts as $np){$navProductsByCate
 <title><?=e($pageTitle)?> | <?=e($storeName)?></title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<link href="assets/css/style.css?v=4.2.3" rel="stylesheet">
+<link href="assets/css/style.css?v=4.2.6" rel="stylesheet">
 <script>try{document.documentElement.dataset.theme=localStorage.getItem('bc-theme')||'light';}catch(e){document.documentElement.dataset.theme='light';}</script>
 </head><body>
 <div class="store-promo text-center py-2"><?=e(setting('announcement_bar','Free shipping for orders above KSh 5,000'))?></div>
@@ -36,24 +34,24 @@ $navProductsByCategory=[]; foreach($navParentProducts as $np){$navProductsByCate
  </div></div></div>
 <header class="store-header">
  <div class="header-main-wrap"><div class="container header-main">
-  <a class="store-logo" href="index.php"><?php if($logo):?><img src="<?=e($logo)?>" alt="<?=e($storeName)?>"><?php else:?><span class="brand-mark"><?=e($storeName)?></span><?php endif;?></a>
-  <form class="header-search" method="get" action="shop.php"><input type="search" name="q" value="<?=e($searchQ)?>" placeholder="Search products, brands or SKU..." aria-label="Search products"><button aria-label="Search"><i class="bi bi-search"></i></button></form>
+  <button class="mobile-menu-toggle" type="button" data-store-menu-toggle aria-label="Open menu" aria-expanded="false"><i class="bi bi-list"></i></button>
+  <a class="store-logo" href="index.php" aria-label="<?=e($storeName)?> home"><?php if($logo):?><img src="<?=e($logo)?>" alt="<?=e($storeName)?>"><?php else:?><span class="brand-mark">BC</span><?php endif;?> <span class="store-business-name"><?=e($storeName)?></span></a>
+  <form class="header-search" method="get" action="shop.php" data-header-search><input type="search" name="q" value="<?=e($searchQ)?>" placeholder="Search products, brands or SKU..." aria-label="Search products"><button aria-label="Search"><i class="bi bi-search"></i></button></form>
+  <button class="mobile-search-toggle" type="button" data-mobile-search-toggle aria-label="Open search"><i class="bi bi-search"></i></button>
   <div class="header-actions"><?php if($loggedUser): ?><div class="account-menu"><button class="account-link account-menu-trigger" type="button" aria-haspopup="true"><?php if(!empty($loggedUser['profile_image'])):?><img class="header-avatar" src="<?=e($loggedUser['profile_image'])?>" alt="Profile"><?php else:?><i class="bi bi-person"></i><?php endif;?><span><?=e(explode(' ',$loggedUser['full_name'])[0])?></span><i class="bi bi-chevron-down small"></i></button><div class="account-menu-panel"><a href="profile.php"><i class="bi bi-person-gear"></i> Update profile</a><form method="post" action="logout.php"><input type="hidden" name="csrf_token" value="<?=e(csrf_token())?>"><button type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button></form></div></div><?php else: ?><a class="account-link" href="login.php"><i class="bi bi-person"></i><span>Login</span></a><?php endif; ?>
   <?php if(!$loggedUser):?><a class="register-link" href="register.php" title="Register" aria-label="Register"><i class="bi bi-person-plus"></i><span>Register</span></a><?php endif;?>
   <a class="cart-link" href="cart.php"><i class="bi bi-cart3"></i><span><?=money($cart['subtotal'])?></span><b><?=$cart['count']?></b></a>
   <button class="theme-toggle" data-theme-toggle type="button" aria-label="Theme" title="Theme"><span aria-hidden="true">☾</span></button></div>
  </div></div>
- <nav class="category-nav" aria-label="Product categories"><div class="container nav-menu"><a class="nav-simple" href="index.php">Home</a><a class="nav-simple" href="shop.php">Shop</a>
- <?php foreach(($navTree[0]??[]) as $navCat): $children=$navTree[(int)$navCat['id']]??[]; $rootGroups=$navProductsByCategory[(int)$navCat['id']]??[]; $hasMenu=(bool)($children||$rootGroups); ?>
+ <nav class="category-nav" id="storeCategoryNav" aria-label="Product categories"><div class="container nav-menu"><a class="nav-simple" href="index.php">Home</a><a class="nav-simple" href="shop.php">Shop</a>
+ <?php foreach(($navTree[0]??[]) as $navCat): $children=$navTree[(int)$navCat['id']]??[]; $hasMenu=(bool)$children; ?>
  <div class="nav-dropdown"><a class="nav-parent" href="shop.php?category=<?=(int)$navCat['id']?>"><?=e($navCat['name'])?><?php if($hasMenu):?><i class="bi bi-chevron-down nav-chevron" aria-hidden="true"></i><?php endif;?></a>
  <?php if($hasMenu):?><div class="nav-mega-menu"><div class="nav-mega-columns">
-  <?php foreach($children as $child):$grand=$navTree[(int)$child['id']]??[];$groups=$navProductsByCategory[(int)$child['id']]??[];?>
+  <?php foreach($children as $child):$grand=$navTree[(int)$child['id']]??[];?>
    <div class="nav-mega-column"><a class="nav-mega-heading" href="shop.php?category=<?=(int)$child['id']?>"><?=e($child['name'])?></a>
     <?php foreach($grand as $leaf):?><a class="nav-mega-link" href="shop.php?category=<?=(int)$leaf['id']?>"><?=e($leaf['name'])?></a><?php endforeach;?>
-    <?php foreach($groups as $group):?><a class="nav-mega-product" href="shop.php?parent_product=<?=(int)$group['id']?>"><?=e($group['name'])?></a><?php endforeach;?>
    </div>
   <?php endforeach;?>
-  <?php if($rootGroups):?><div class="nav-mega-column"><span class="nav-mega-heading">Popular product groups</span><?php foreach($rootGroups as $group):?><a class="nav-mega-product" href="shop.php?parent_product=<?=(int)$group['id']?>"><?=e($group['name'])?></a><?php endforeach;?></div><?php endif;?>
  </div><a class="nav-view-all" href="shop.php?category=<?=(int)$navCat['id']?>">View all <?=e($navCat['name'])?> <i class="bi bi-arrow-right"></i></a></div><?php endif;?></div>
- <?php endforeach;?><a class="nav-simple" href="shop.php?sort=newest">New arrivals</a></div></nav>
+ <?php endforeach;?><a class="nav-simple" href="shop.php?sort=newest">New arrivals</a><div class="mobile-nav-actions"><?php if($loggedUser):?><a href="profile.php"><i class="bi bi-person-gear"></i> Update profile</a><form method="post" action="logout.php"><input type="hidden" name="csrf_token" value="<?=e(csrf_token())?>"><button type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button></form><?php else:?><a href="login.php"><i class="bi bi-person"></i> Login</a><a href="register.php"><i class="bi bi-person-plus"></i> Register</a><?php endif;?><button type="button" data-theme-toggle><span aria-hidden="true">☾</span> Dark mode</button></div></div></nav>
 </header><main>

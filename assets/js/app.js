@@ -86,3 +86,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Admin sidebar collapse preference
 document.addEventListener('click', (event) => { const btn=event.target.closest('[data-sidebar-toggle]'); if(!btn)return; document.body.classList.toggle('sidebar-collapsed'); try{localStorage.setItem('bc-admin-sidebar',document.body.classList.contains('sidebar-collapsed')?'collapsed':'expanded');}catch(e){} });
+
+
+// Responsive storefront and admin navigation.
+document.addEventListener('DOMContentLoaded', () => {
+  const storeToggle=document.querySelector('[data-store-menu-toggle]');
+  const storeNav=document.getElementById('storeCategoryNav');
+  storeToggle?.addEventListener('click',()=>{const open=storeNav?.classList.toggle('mobile-nav-open')||false;storeToggle.setAttribute('aria-expanded',open?'true':'false');storeToggle.setAttribute('aria-label',open?'Close menu':'Open menu');storeToggle.innerHTML=open?'<i class="bi bi-x-lg"></i>':'<i class="bi bi-list"></i>';});
+  document.querySelector('[data-mobile-search-toggle]')?.addEventListener('click',()=>{const form=document.querySelector('[data-header-search]');form?.classList.toggle('mobile-search-open');if(form?.classList.contains('mobile-search-open'))form.querySelector('input')?.focus();});
+  document.querySelectorAll('.nav-dropdown>.nav-parent').forEach(link=>link.addEventListener('click',event=>{if(window.matchMedia('(max-width: 767px)').matches){event.preventDefault();link.parentElement.classList.toggle('mobile-submenu-open');}}));
+  const adminToggle=document.querySelector('[data-admin-menu-toggle]'),sidebar=document.getElementById('adminSidebar');
+  adminToggle?.addEventListener('click',()=>{const open=sidebar?.classList.toggle('mobile-sidebar-open')||false;adminToggle.setAttribute('aria-expanded',open?'true':'false');adminToggle.setAttribute('aria-label',open?'Close admin menu':'Open admin menu');adminToggle.innerHTML=open?'<i class="bi bi-x-lg"></i>':'<i class="bi bi-list"></i>';});
+  document.querySelectorAll('.admin-main form').forEach(form=>{const input=form.querySelector('input[name="q"],input[type="search"]');if(!input)return;form.classList.add('admin-search-form');const btn=form.querySelector('button[type="submit"],button:not([type])');if(btn){btn.classList.add('admin-search-submit');const label=btn.textContent.trim()||'Search';btn.innerHTML='<i class="bi bi-search admin-search-icon" aria-hidden="true"></i><span class="admin-search-label"></span>';btn.querySelector('.admin-search-label').textContent=label;btn.addEventListener('click',event=>{if(window.matchMedia('(max-width: 800px)').matches&&!form.classList.contains('mobile-search-open')){event.preventDefault();form.classList.add('mobile-search-open');input.focus();}});}});
+});
+
+
+// Product quantity controls and compact mobile shop search.
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-quantity-stepper]').forEach((wrap) => {
+    const input=wrap.querySelector('input[name="quantity"]');
+    const min=Number(input?.min||1), max=Number(input?.max||999999);
+    const clamp=()=>{let n=Number.parseInt(input.value,10);if(!Number.isFinite(n))n=min;n=Math.max(min,Math.min(max,n));input.value=String(n);};
+    wrap.querySelector('[data-quantity-minus]')?.addEventListener('click',()=>{clamp();input.value=String(Math.max(min,Number(input.value)-1));});
+    wrap.querySelector('[data-quantity-plus]')?.addEventListener('click',()=>{clamp();input.value=String(Math.min(max,Number(input.value)+1));});
+    input?.addEventListener('change',clamp);input?.addEventListener('input',()=>{if(input.value!==''&&Number(input.value)<min)input.value=String(min);});
+    input?.form?.addEventListener('submit',clamp);
+  });
+  document.querySelector('[data-shop-search-toggle]')?.addEventListener('click',()=>{const form=document.querySelector('.shop-search-toolbar');form?.classList.toggle('mobile-shop-search-open');if(form?.classList.contains('mobile-shop-search-open'))form.querySelector('input[type="search"]')?.focus();});
+});

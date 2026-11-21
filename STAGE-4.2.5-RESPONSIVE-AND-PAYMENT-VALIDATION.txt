@@ -1,0 +1,37 @@
+BLUECIRCUIT ELECTRONICS — STAGE 4.2.5
+Responsive storefront/admin and M-Pesa receipt validation
+
+WHAT CHANGED
+- Slider WhatsApp CTA is now a green WhatsApp icon button with white icon.
+- Breadcrumbs use dark blue in light mode and orange in dark mode.
+- Storefront mobile header order is menu, logo, search icon and cart. Login/register/profile/logout and theme control are in the expanded navigation.
+- Mobile category navigation opens from a three-line menu. Category dropdowns now list child categories only; parent-product group links have been removed.
+- Mobile product rails and shop catalogue use two product cards per row with compact text, spacing and images.
+- Tablet/laptop header spacing and font sizes are reduced at intermediate widths.
+- Admin uses a three-line responsive menu. On tablet/mobile the sidebar opens as a vertical menu; theme, view-shop and logout controls are available inside it.
+- Admin header uses the configured store logo and favicon. Admin profile picture can be uploaded from Admin > My profile and appears beside the admin name on desktop and as an avatar on smaller screens.
+- Admin search forms collapse to a search icon on small screens and reveal the input when tapped.
+- Added a compact footer to admin pages.
+- Checkout now requires a 10-character alphanumeric M-Pesa receipt code, strips spaces/hyphens and normalizes case, rejects reused receipts, and uses a one-time checkout token to prevent accidental repeated form submission.
+- Payment approval applies the same receipt format and duplicate checks.
+
+DATABASE MIGRATION — REQUIRED
+Run this file against the existing electronics_store database:
+  database/migrations/20261107_unique_mpesa_receipts.sql
+
+Before running the ALTER TABLE, execute the diagnostic SELECT query at the top of the migration. If it returns duplicate receipt groups, inspect those payment records and resolve the duplicates manually first. The migration intentionally does not delete or rewrite existing orders/payments.
+
+IMPORTANT PAYMENT NOTE
+The format check confirms only that the customer entered a receipt-shaped code. It does NOT verify that M-Pesa actually received the money. Continue checking the official M-Pesa confirmation/statement before approving a payment. This project still uses manual payment verification, not Daraja API callbacks.
+
+INSTALL
+1. Back up the project folder and the electronics_store database.
+2. Extract the ZIP and copy the electronics-store folder contents over the existing project, preserving uploads and config/database.php. If your local config has custom database credentials, retain your existing config/database.php.
+3. Run the migration above in phpMyAdmin after checking for historical duplicate receipts.
+4. Clear browser cache or hard-refresh (Ctrl+F5) so style.css?v=4.2.5 and admin.css?v=4.2.5 load.
+5. Sign in to Admin and open My profile to upload the admin picture.
+6. Test storefront at desktop, tablet and mobile widths; test admin menu and profile upload.
+7. Test a valid 10-character receipt, a long pasted SMS, and a receipt already used on another order.
+
+VERIFICATION
+All PHP files passed PHP 8.4 syntax checks. assets/js/app.js passed Node syntax checking. No live database migration, browser/device test, or actual M-Pesa verification was performed in this build environment.

@@ -1,0 +1,30 @@
+BLUECIRCUIT ELECTRONICS — STAGE 4.2.6
+====================================
+
+This update is based on the exact Stage 4.2.5 download archive.
+
+Changes:
+- Mobile hero slider content has extra horizontal clearance from previous/next controls.
+- Mobile category subcategories are displayed as a vertical dropdown/list.
+- Product-card images on the homepage and shop use contain sizing so the complete product remains visible without cropping.
+- Product detail image area is smaller and uses contain sizing.
+- Product detail Add to cart, Checkout and Continue shopping controls use compact sizing on mobile.
+- Product detail Quick shop button is now labelled Checkout.
+- Product quantity uses minus / number / plus controls, enforces a minimum of 1, and caps at available stock. Typed values are normalized before form submission.
+- Store name appears after the logo on desktop on both storefront and admin. Mobile shows the logo only.
+- Admin Store settings now includes a Google Maps embed URL field for the headquarters. If left blank, the contact page builds a map from the configured Business location/address.
+- Contact page shows the headquarters map beside the contact form and puts the business location, hours and WhatsApp details below both.
+- Shop page search/filter controls collapse behind a search icon on mobile and can be revealed by tapping it.
+
+INSTALLATION:
+1. Back up your current electronics-store folder and database.
+2. Extract this archive.
+3. Copy the extracted project files over your existing project, preserving config/database.php, uploads/, and your existing database. If prompted, keep your existing database config and uploaded media.
+4. No database schema migration or re-import is required for this update. The new headquarters_map_embed_url setting is saved automatically when Store settings are saved.
+5. In Admin > Store settings, confirm the Store name and logo. Set Business location to the headquarters address. Optionally paste a Google Maps Embed URL into the new headquarters map field. Use an official Google Maps embed URL beginning https://www.google.com/maps/embed?...
+6. Hard-refresh the storefront and admin pages to load the updated CSS and JavaScript.
+
+NOTES:
+- The generated map based on Business location depends on Google Maps being reachable by the visitor's browser. For best control, use the official Google Maps Embed URL.
+- Quantity buttons prevent values below 1 and above available stock in the browser. Server-side cart validation remains responsible for final stock enforcement.
+- PHP syntax checks and JavaScript syntax checks passed. This package has not been live-tested against the user's XAMPP database or on physical mobile devices.
